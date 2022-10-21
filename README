@@ -1,0 +1,77 @@
+# Copyright 2022 Tulpan Andrei 324CA - Tema 3 PCom
+
+<-------------------------Introducere------------------------->
+    Clientul citeste datele introduse de utilizator in consola
+si in functie de comenzile primite, trimite request-uri catre
+server (HOST: 34.241.4.235 PORT: 8080).
+    Comenzi disponibile utilizatorilor sunt urmatoarele:
+    - register -> Se creeaza un cont nou daca este posibil;
+    - login -> Se logheaza daca credentialele sunt corecte;
+    - enter_library -> Trimite un request pentru a primi acces
+                    in biblioteca;
+    - get_books -> Se trimite un request pentru o lista cu toate
+                    cartile;
+    - get_book -> Se cer informatii despre o anumita carte
+    - add_book -> Se adauga o carte in biblioteca
+    - delete_book -> Se sterge o carte din biblioteca
+    - logout -> Se delogheaza si se sterg parametrii de acces
+    - exit -> Se inchide clientul
+    Fiecare comanda va fi executata cu denumirea acesteia, iar
+apoi vor aparea unul cate unul fiecare parametru necesar comenzii
+pentru a fi executata.
+    Comenzile vin cu mesaje specifice si relevante atat in cazul
+unei comenzi realizate cu succes cat si in cazul unei comenzi
+care primeste eroare.
+
+<------------Cum se trimit cererile catre server?------------->
+    Pentru a trimite cererile catre server se deschide de
+fiecare data un socket nou cu o conexiune catre server, apoi
+se creeaza un obiect de tip JSON cu toate datele primite ca
+input de la utilizator, se compune mesajul ce trebuie trimis
+cu acest obiect JSON si se trimite catre server. Pentru a
+deschide o conexiune sau pentru a trimite un mesaj se folosesc
+functiile implementate in laboratorul de HTTP.
+
+<-----------Cum se primeste raspuns de la server?------------->
+    Dupa ce a fost trimis catre server un mesaj, se asteapta
+si un raspuns din partea acestuia, functia aceasta fiind
+implementata tot in laboratorul de HTTP. Dupa primirea
+raspunsului acesta este procesat in client, verificandu-se
+in primul rand codul de raspuns pentru a afisa un mesaj de
+succes, body-ul raspunsului in functie de comanda sau un
+mesaj de eroare.
+
+<----------Cum se verifica accesul utilizatorului?------------>
+    In client se salveaza ca string-uri cookie-urile cat si
+token-ul de autorizare pentru biblioteca.
+    La executarea comenzii de login cu succes se salveaza
+cookie-urile in client, iar la fiecare comanda va putea fi
+executata, in lipsa acestor cookie-uri utilizatorul va fi
+anuntat ca nu este logat.
+    Pentru a avea acces in biblioteca utilizatorul va primi
+un token care va fi salvat in client. La fiecare executare a
+unei comenzi in biblioteca se vor trimite catre server atat
+cookie-urile, cat si token-ul, in cazul in care token-ul este
+invalid se va primi un cod de eroare si va fi afisat u mesaj
+de eroare.
+    La delogare se vor sterge atat cookie-urile cat si token-ul
+de autorizare pentru biblioteca, fara acestea utilizatorul va
+trebui sa se logheze iar pentru a mai avea acces la comenzi.
+
+<------------Cum se transforma mesajele in JSON?-------------->
+    Pentru a transforma mesajele ce trebuie trimise in obiecte
+de tip JSON am folosit librarie parson implementata de kgabis
+pe github (https://github.com/kgabis). Am folosit din aceasta
+librarie functiile de serializare atat pentru string-uri cat
+si pentru numere intregi.
+    In cazul in care primesc un mesaj de tip JSON, de exemplu
+lista de carti sau o singura carte, folosesc tot o functie
+din aceasta librarie pentru a afisa mai frumos obiectul de
+tip JSON si pentru a fi mai usor de citit pentru utilizator.
+
+<--------------Utilizarea eficienta a memoriei---------------->
+    Pentru a realiza o conexiune fluida intre server si client,
+dupa executarea fiecarei comenzi primite de la utilizator am
+inchis atat socket-ul deschis pentru transmiterea datelor, cat
+am si eliberat toata memoria dinamica alocata in cadrul
+executarii comenzii.
